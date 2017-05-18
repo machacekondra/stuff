@@ -1,0 +1,16 @@
+- hosts: localhost
+
+  tasks:
+    - name: Create a RHV provider in ManageIQ
+      uri:
+        url: https://10.34.61.40/api/providers
+        validate_certs: no
+        method: POST
+        user: admin
+        password: smartvm
+        body: "{{ lookup('file','add_rhv_provider.json') }}"
+        force_basic_auth: yes
+        body_format: json
+      register: rhv_provider
+      changed_when: "rhv_provider.status == 201 or rhv_provider.status == 200"
+      failed_when: "'error' in rhv_provider.json and 'has already been taken' not in rhv_provider.json.error.message"

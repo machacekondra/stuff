@@ -1,0 +1,17 @@
+- hosts: localhost
+
+  tasks:
+    - ovirt_vms_facts:
+        auth:
+          url: https://ondra.local/ovirt-engine/api
+          username: admin@internal
+          password: 123456
+          insecure: true
+
+        pattern: name=manageiq
+        fetch_nested: true
+        nested_attributes: ips
+
+    - name:
+      debug:
+        msg: "{{  ovirt_vms | map(attribute='reported_devices') | first | map(attribute='ips') | first | map(attribute='address') | first }}"
